@@ -1,11 +1,19 @@
 from fastapi import FastAPI
 import chromadb
+from chromadb.utils import embedding_functions
 
 app = FastAPI()
 
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 
-collection = chroma_client.get_or_create_collection("uniper_collection")
+sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(
+    model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+)
+
+collection = chroma_client.get_or_create_collection(
+    name="uniper_collection_sbert",
+    embedding_function=sentence_transformer_ef
+)
 
 
 @app.get("/")
